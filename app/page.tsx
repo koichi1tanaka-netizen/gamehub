@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+type Difficulty = "easy" | "medium" | "hard";
 
 // -------------------- CONSTANTS --------------------
 const MAX_ATTEMPTS = 10;
@@ -9,7 +10,8 @@ const WORD_LIST = [
   "UNCLE","VOICE","WATER","YOUTH","ZEBRA"
 ];
 
-const SUDOKU_PUZZLES = {
+const SUDOKU_PUZZLES: Record<Difficulty, { board: number[][] }[]> = {
+
   easy: [{ board: [[1,3,2,4],[0,4,1,3],[4,1,3,0],[3,2,4,1]] }],
   medium: [{ board: [[1,0,2,4],[0,4,1,0],[4,1,0,0],[0,2,4,1]] }],
   hard: [{ board: [[0,0,2,0],[0,4,0,0],[0,0,3,0],[0,2,0,0]] }]
@@ -218,8 +220,9 @@ function MemoryMatch() {
 
 // -------------------- SUDOKU --------------------
 function Sudoku() {
-  const [difficulty, setDifficulty] = useState<"easy"|"medium"|"hard">("easy");
+ const [difficulty, setDifficulty] = useState<Difficulty>("easy");
   const puzzle = SUDOKU_PUZZLES[difficulty][0];
+  
   const [board, setBoard] = useState(puzzle.board.map(r => [...r]));
 
   return (
@@ -246,18 +249,20 @@ function Sudoku() {
       </div>
 
       <div className="flex gap-2">
-        {["easy","medium","hard"].map(d => (
-          <button
-            key={d}
-            onClick={() => {
-              setDifficulty(d as any);
-              setBoard(SUDOKU_PUZZLES[d as any][0].board.map(r => [...r]));
-            }}
-            className="px-3 py-1 bg-slate-200 rounded"
-          >
-            {d}
-          </button>
-        ))}
+     {(["easy", "medium", "hard"] as Difficulty[]).map(d => (
+  <button
+    key={d}
+    onClick={() => {
+      setDifficulty(d);
+      setBoard(SUDOKU_PUZZLES[d][0].board.map(r => [...r]));
+    }}
+    className={`px-3 py-1 rounded ${
+      difficulty === d ? "bg-blue-600 text-white" : "bg-slate-200"
+    }`}
+  >
+    {d}
+  </button>
+))}
       </div>
     </div>
   );
